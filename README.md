@@ -18,8 +18,8 @@ The project will be split up into three main objectives to facilitate smoother d
   - React setup, etc..
   - World map: Find a JS library with an interactable world map, zoomable, overlay data, colours to represent +/-
   - Timeline: Slider to change date? map reacts to this change
-- Process Data (NLP)
-  - Sentiment analysis, lexical semanticas, NER
+- Process Data 
+  - Sentiment analysis, NER
 
 ### Tech
 
