@@ -12,14 +12,14 @@ The end goal of the project is to have a website to analyse the content of socia
 The project will be split up into three main objectives to facilitate smoother development: 
 
 - Acquire data
--- Tweets need to be scraped somehow: Best case scenario take a single hashtag and get every tweet from start to now
--- Format the data: Create data structure and types, possibly mock some data to allow site development
+  - Tweets need to be scraped somehow: Best case scenario take a single hashtag and get every tweet from start to now
+  - Format the data: Create data structure and types, possibly mock some data to allow site development
 - Create site
--- React setup, etc..
--- World map: Find a JS library with an interactable world map, zoomable, overlay data, colours to represent +/-
--- Timeline: Slider to change date? map reacts to this change
+  - React setup, etc..
+  - World map: Find a JS library with an interactable world map, zoomable, overlay data, colours to represent +/-
+  - Timeline: Slider to change date? map reacts to this change
 - Process Data (NLP)
--- Sentiment analysis, lexical semanticas, NER
+  - Sentiment analysis, lexical semanticas, NER
 
 ### Tech
 
