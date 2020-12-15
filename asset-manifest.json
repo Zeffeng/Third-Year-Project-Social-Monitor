@@ -1,0 +1,20 @@
+{
+  "files": {
+    "main.css": "/Third-Year-Project-Social-Monitor/static/css/main.ab7136cd.chunk.css",
+    "main.js": "/Third-Year-Project-Social-Monitor/static/js/main.25e79c38.chunk.js",
+    "main.js.map": "/Third-Year-Project-Social-Monitor/static/js/main.25e79c38.chunk.js.map",
+    "runtime-main.js": "/Third-Year-Project-Social-Monitor/static/js/runtime-main.9e8cee0b.js",
+    "runtime-main.js.map": "/Third-Year-Project-Social-Monitor/static/js/runtime-main.9e8cee0b.js.map",
+    "static/js/2.400fe162.chunk.js": "/Third-Year-Project-Social-Monitor/static/js/2.400fe162.chunk.js",
+    "static/js/2.400fe162.chunk.js.map": "/Third-Year-Project-Social-Monitor/static/js/2.400fe162.chunk.js.map",
+    "index.html": "/Third-Year-Project-Social-Monitor/index.html",
+    "static/css/main.ab7136cd.chunk.css.map": "/Third-Year-Project-Social-Monitor/static/css/main.ab7136cd.chunk.css.map",
+    "static/js/2.400fe162.chunk.js.LICENSE.txt": "/Third-Year-Project-Social-Monitor/static/js/2.400fe162.chunk.js.LICENSE.txt"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.9e8cee0b.js",
+    "static/js/2.400fe162.chunk.js",
+    "static/css/main.ab7136cd.chunk.css",
+    "static/js/main.25e79c38.chunk.js"
+  ]
+}
