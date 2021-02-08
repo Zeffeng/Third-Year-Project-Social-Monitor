@@ -10,7 +10,7 @@ ReactDOM.render(
       <Main>
       <BrowserRouter>
         <Switch>
-            <Route path="/" component={Home} exact />
+            <Route path="/Third-Year-Project-Social-Monitor" component={Home} exact/>
         </Switch>   
       </BrowserRouter>
       </Main>

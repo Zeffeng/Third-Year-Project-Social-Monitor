@@ -24,6 +24,7 @@ The project will be split up into three main objectives to facilitate smoother d
 ### Tech
 
 * [React] - Main JS framework for site
-* We'll figure the rest out later
+* [AMCharts] - Charting package used for world map
+
 
 
