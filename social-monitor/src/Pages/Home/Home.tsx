@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from 'react'
-import { Title } from '../../Styles/TextStyles';
+import React from 'react'
 import Map from '../../Components/Map/Map';
-import { Main } from "../../Styles/ContainerStyles";
+import styled from "styled-components";
+import Timeline from '../../Components/Timeline/Timeline';
+
+export const Container= styled.div`
+    height: 100vh;
+    padding-left: 15px;
+`;
 
 const Home: React.FC = () => {
-    const [currentTime, setCurrentTime] = useState(0);
 
-    useEffect(() => {
-        fetch('/time').then(res => res.json()).then(data => {
-        setCurrentTime(data.time);
-        });
-    }, []);
-
-    return <Main>
-        <Title>
-            Social Monitor
-        </Title>
-        <Map />
-        <p>The current time is {currentTime}.</p>
-    </Main>
+    return (
+        <>
+            <Container>
+                <Map />
+            </Container>
+            <Timeline />
+        </>
+    )
 }
 
 export default Home
