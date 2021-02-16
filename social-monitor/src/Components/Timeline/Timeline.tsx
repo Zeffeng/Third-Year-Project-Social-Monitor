@@ -2,19 +2,24 @@ import React from "react";
 import styled from "styled-components";
 
 const Panel = styled.div<{open: boolean}>`
-    background-color: white;
-    opacity: 0.5;
+    background-color: #212327;
+    opacity: 0.8;
     color: white;
     font-size: 20px;
-    height: ${props => props.open ? "100px": "50px"};
-    position: absolute;
+    height: ${props => props.open ? "70%": "25px"};
+    position: fixed;
     bottom: 0px;
     z-index: 1;
     width: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: height 0.5s;
 `;
 
 const Button = styled.button`
-    
+    width: 100px;
+    align-self: center;
+    margin-top: 1px;
 `;
 
 const Timeline: React.FC = () => {

@@ -6,7 +6,8 @@ const NavBar = styled.div`
     background-color: transparent;
     display: flex;
     align-items: baseline;
-    position: absolute;
+    position: fixed;
+    width: 100%;
     top: 0px;
     z-index: 1;
     padding-left: 15px;

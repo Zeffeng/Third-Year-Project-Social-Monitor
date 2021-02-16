@@ -1,24 +1,29 @@
-import React, { Component } from 'react';
+import React from 'react';
 import * as am4core from "@amcharts/amcharts4/core";
 import * as am4maps from "@amcharts/amcharts4/maps";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
-import mockData from "./mockData"
+import { GlobalProps } from '../../Types/GlobalProps';
 
 am4core.useTheme(am4themes_animated);
 
-class Map extends Component {
+interface MapProps extends GlobalProps {}
+class Map extends React.Component<MapProps, {}> {
     chart: am4maps.MapChart | undefined;
     
     componentDidMount() {
-        let data = mockData();
+        const data = this.props.globalState.get("CountryData")
         let mapChart = am4core.create("chartdiv", am4maps.MapChart);
         mapChart.geodata = am4geodata_worldLow
         mapChart.projection = new am4maps.projections.Miller();
         mapChart.height = am4core.percent(100)
 
         let polygonSeries = mapChart.series.push(new am4maps.MapPolygonSeries());
-        polygonSeries.exclude = ["AQ"];
+        polygonSeries.exclude = [
+            "AQ", "HM", "TF", "RE", "SC", "IO", "CX", "CC", "MV", "BV", "GS", "SH", "ST",
+            "JU", "KM", "YT", "GO", "GU", "PW", "MP", "FM", "NR", "MH", "TV", "NF", "CV", "FO",
+            "PM", "TC", "KY", "PF", "PN", "CK", "NU", "TO", "WF", "TK"
+        ];
         polygonSeries.useGeodata = true;
         polygonSeries.data = data;
         polygonSeries.heatRules.push({
