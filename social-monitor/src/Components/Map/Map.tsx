@@ -26,11 +26,16 @@ class Map extends React.Component<MapProps, {}> {
         ];
         polygonSeries.useGeodata = true;
         polygonSeries.data = data;
-        polygonSeries.heatRules.push({
-            "property": "fill",
-            "target": polygonSeries.mapPolygons.template,
-            "min": am4core.color("#e60000"),
-            "max": am4core.color("#00e64d")
+        polygonSeries.mapPolygons.template.adapter.add("fill", (fill, target) => {
+            if (target.dataItem)
+                if(target.dataItem.value > 0.05) {
+                    return am4core.color(this.getColorForPercentage(target.dataItem.value, true))
+                } else if (target.dataItem.value < -0.05) {
+                    return am4core.color(this.getColorForPercentage(target.dataItem.value, false))
+                } else if (target.dataItem.value <= 0.05 && target.dataItem.value >= -0.05) {
+                    return am4core.color("#FFFF22")
+                }
+            return fill
         })
 
         let polygonTemplate = polygonSeries.mapPolygons.template;
@@ -55,6 +60,49 @@ class Map extends React.Component<MapProps, {}> {
             <div id="chartdiv" style={{ width: "95%", height: "80%" }}></div>
         );
     }
+
+    componentToHex(c: number) {
+        const hex = c.toString(16);
+        return hex.length == 1 ? "0" + hex : hex;
+    }
+
+    getColorForPercentage(pct: number, mode: boolean) {
+        const positive = [
+            { pct: 0.05, color: { r: 0xff, g: 0xff, b: 0x22 } },
+            { pct: 0.5, color: { r: 0x86, g: 0xff, b: 0x11 } },
+            { pct: 1.0, color: { r: 0x09, g: 0xff, b: 0x00 } } 
+        ];
+
+        const negative = [
+            { pct: -1.0, color: { r: 0xff, g: 0x00, b: 0x0e } },
+            { pct: -0.5, color: { r: 0xff, g: 0x7a, b: 0x18 } },
+            { pct: -0.05, color: { r: 0xff, g: 0xff, b: 0x22 } } 
+        ];
+        
+        var percentColors;
+        if (mode)
+            percentColors = positive
+        else
+            percentColors = negative
+        for (var i = 1; i < percentColors.length - 1; i++) {
+            if (pct < percentColors[i].pct) {
+                break;
+            }
+        }
+        const lower = percentColors[i - 1];
+        const upper = percentColors[i];
+        const range = upper.pct - lower.pct;
+        const rangePct = (pct - lower.pct) / range;
+        const pctLower = 1 - rangePct;
+        const pctUpper = rangePct;
+        const color = {
+            r: Math.floor(lower.color.r * pctLower + upper.color.r * pctUpper),
+            g: Math.floor(lower.color.g * pctLower + upper.color.g * pctUpper),
+            b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
+        };
+        
+        return "#" + this.componentToHex(color.r) + this.componentToHex(color.g) + this.componentToHex(color.b);
+    };
 }
 
 
