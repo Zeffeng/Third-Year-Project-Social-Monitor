@@ -16,7 +16,8 @@ export const Main = styled.div`
 `;
 
 const initialState: MapState = {
-    CountryData: generateInitialData()
+    CountryData: generateInitialData(),
+    TimelineData: [],
 }
 const { useGlobalState, getGlobalState, setGlobalState } = createGlobalState(initialState)
 const globalState = {

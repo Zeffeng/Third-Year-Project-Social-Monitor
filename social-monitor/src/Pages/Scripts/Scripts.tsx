@@ -22,12 +22,14 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
             }, 
             method: 'POST',
             body: JSON.stringify(file.content)
-        }).then(res => res.json()).then(data => {
+        }).then(res => res.json()).then(response => {
+            const data = response.slice(-1)[0]
             const countryData = globalState.get("CountryData") as Country[]
             countryData.forEach(item => {
                 item.value = data[item.id]
             })
             globalState.set("CountryData", countryData)
+            globalState.set("TimelineData", response)
         })
     }
 
@@ -44,7 +46,7 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
 
     return (
         <Container>
-            <button onClick={callModel}>Click for things</button>
+            <button onClick={callModel}>Run Vader Model</button>
             <input type="file" onChange={e => uploadFile(e)} />
         </Container>
     )

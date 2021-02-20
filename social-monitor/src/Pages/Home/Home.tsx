@@ -11,12 +11,14 @@ const Container= styled.div`
 
 interface HomeProps extends GlobalProps {}
 const Home: React.FC<HomeProps> = (props: HomeProps) => {
+    const [timelineValue, setTimelineValue] = React.useState(0);
+    
     return (
         <>
             <Container>
-                <Map globalState={props.globalState}/>
+                <Map globalState={props.globalState} timelineValue={timelineValue}/>
             </Container>
-            <Timeline />
+            <Timeline globalState={props.globalState} setTimelineValue={setTimelineValue}/>
         </>
     )
 }

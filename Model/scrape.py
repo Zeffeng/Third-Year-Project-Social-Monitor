@@ -52,9 +52,9 @@ def geoCode(address):
 
 auth = tweepy.AppAuthHandler("MAHDLIR9hqfBrkoLWWlVxHQ6V","M3bU5oKKOK1TTfzq69DYX2Ah8LSBZLj5lZeQntkKPeGFqghjPn")
 api = tweepy.API(auth, wait_on_rate_limit=True)
-numDays = 0
 curMonth = 1
 while curMonth < 13:
+    numDays = 0
     while numDays < daysInMonth[curMonth]:
         numTweets = 0
         print(fromDate, toDate)

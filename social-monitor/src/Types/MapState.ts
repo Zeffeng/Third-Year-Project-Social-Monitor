@@ -1,5 +1,6 @@
 export interface MapState {
-    CountryData: Country[]
+    CountryData: Country[],
+    TimelineData: CountryCodeData[]
 }
 
 export interface Country {
@@ -7,4 +8,8 @@ export interface Country {
     name: string,
     value: number | null,
     fill: string
+}
+
+export interface CountryCodeData {
+    [id: string]: number | string | null
 }

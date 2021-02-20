@@ -4,69 +4,102 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import { GlobalProps } from '../../Types/GlobalProps';
+import { Country, CountryCodeData } from '../../Types/MapState';
 
 am4core.useTheme(am4themes_animated);
 
-interface MapProps extends GlobalProps {}
-class Map extends React.Component<MapProps, {}> {
-    chart: am4maps.MapChart | undefined;
-    
-    componentDidMount() {
-        const data = this.props.globalState.get("CountryData")
-        let mapChart = am4core.create("chartdiv", am4maps.MapChart);
-        mapChart.geodata = am4geodata_worldLow
-        mapChart.projection = new am4maps.projections.Miller();
-        mapChart.height = am4core.percent(100)
+interface MapProps extends GlobalProps {
+    timelineValue: number
+}
+const Map: React.FC<MapProps> = (props: MapProps) => {
+    const { globalState } = props;
+    const [chart, setChart] = React.useState<am4maps.MapChart | undefined>(undefined)
+    const [curTimelineVal, setCurTimelineVal] = React.useState(-1)
 
-        let polygonSeries = mapChart.series.push(new am4maps.MapPolygonSeries());
-        polygonSeries.exclude = [
-            "AQ", "HM", "TF", "RE", "SC", "IO", "CX", "CC", "MV", "BV", "GS", "SH", "ST",
-            "JU", "KM", "YT", "GO", "GU", "PW", "MP", "FM", "NR", "MH", "TV", "NF", "CV", "FO",
-            "PM", "TC", "KY", "PF", "PN", "CK", "NU", "TO", "WF", "TK"
-        ];
-        polygonSeries.useGeodata = true;
-        polygonSeries.data = data;
-        polygonSeries.mapPolygons.template.adapter.add("fill", (fill, target) => {
-            if (target.dataItem)
-                if(target.dataItem.value > 0.05) {
-                    return am4core.color(this.getColorForPercentage(target.dataItem.value, true))
-                } else if (target.dataItem.value < -0.05) {
-                    return am4core.color(this.getColorForPercentage(target.dataItem.value, false))
-                } else if (target.dataItem.value <= 0.05 && target.dataItem.value >= -0.05) {
-                    return am4core.color("#FFFF22")
+    React.useEffect(() => {
+        if (chart === undefined) {
+            const data = globalState.get("CountryData") as Country[]
+            let mapChart = am4core.create("chartdiv", am4maps.MapChart);
+            mapChart.geodata = am4geodata_worldLow
+            mapChart.projection = new am4maps.projections.Miller();
+            mapChart.height = am4core.percent(100)
+
+            let polygonSeries = mapChart.series.push(new am4maps.MapPolygonSeries());
+            polygonSeries.exclude = [
+                "AQ", "HM", "TF", "RE", "SC", "IO", "CX", "CC", "MV", "BV", "GS", "SH", "ST",
+                "JU", "KM", "YT", "GO", "GU", "PW", "MP", "FM", "NR", "MH", "TV", "NF", "CV", "FO",
+                "PM", "TC", "KY", "PF", "PN", "CK", "NU", "TO", "WF", "TK"
+            ];
+            polygonSeries.useGeodata = true;
+            polygonSeries.data = data;
+            polygonSeries.mapPolygons.template.adapter.add("fill", (fill, target) => {
+                const item = (target.dataItem.dataContext as Country)
+                if (item) {
+                    if (item.value) {
+                        if(item.value > 0.05) {
+                            return am4core.color(getColorForPercentage(item.value, true))
+                        } else if (item.value < -0.05) {
+                            return am4core.color(getColorForPercentage(item.value, false))
+                        } else if (item.value <= 0.05 && item.value >= -0.05) {
+                            return am4core.color("#FFFF22")
+                        }
+                    } else {
+                        return am4core.color("#D9D9D9")
+                    }
                 }
-            return fill
-        })
+                return fill
+            })
 
-        let polygonTemplate = polygonSeries.mapPolygons.template;
-        polygonTemplate.tooltipText = "{name} : {value}";
-        // polygonTemplate.propertyFields.fill = "fill"
-        polygonTemplate.nonScalingStroke = true;
+            let polygonTemplate = polygonSeries.mapPolygons.template;
+            polygonTemplate.tooltipText = "{name} : {value}";
+            polygonTemplate.nonScalingStroke = true;
 
-        // let hs = polygonTemplate.states.create("hover");
-        // hs.properties.fill = am4core.color("#367B25");
-
-        this.chart = mapChart;
-    }
-
-    componentWillUnmount() {
-        if (this.chart) {
-            this.chart.dispose();
+            setChart(mapChart)
         }
-    }
+    }, [chart, globalState, getColorForPercentage])
 
-    render() {
-        return (
-            <div id="chartdiv" style={{ width: "95%", height: "80%" }}></div>
-        );
-    }
+    React.useEffect(() => {
+        if (curTimelineVal !== -1 && chart){
+            const polygons = chart.series.getIndex(0) as am4maps.MapPolygonSeries;
+            if (polygons) {
+                const timelineData = globalState.get("TimelineData")[props.timelineValue] as CountryCodeData
+                for (const [key, value] of Object.entries(timelineData)) {
+                    const polygon = polygons.getPolygonById(key)
+                    if (polygon) {
+                        const val = value as number
+                        (polygon.dataItem.dataContext as Country).value = val
+                        polygon.dataItem.value = val
+                        let fill = polygon.fill
+                        if (val) {
+                            if(val > 0.05) {
+                                fill = am4core.color(getColorForPercentage(val, true))
+                            } else if (val < -0.05) {
+                                fill = am4core.color(getColorForPercentage(val, false))
+                            } else if (val <= 0.05 && val >= -0.05) {
+                                fill = am4core.color("#FFFF22")
+                            }
+                        } else {
+                            fill = am4core.color("#D9D9D9")
+                        }
+                        polygon.fill = fill
+                    }
+                }
+                polygons.invalidateRawData()
+            }
+        }
+        setCurTimelineVal(props.timelineValue)
+    }, [props.timelineValue, chart, curTimelineVal, getColorForPercentage, globalState])
 
-    componentToHex(c: number) {
+    return (
+        <div id="chartdiv" style={{ width: "95%", height: "80%" }}></div>
+    );    
+
+    function componentToHex(c: number) {
         const hex = c.toString(16);
-        return hex.length == 1 ? "0" + hex : hex;
+        return hex.length === 1 ? "0" + hex : hex;
     }
 
-    getColorForPercentage(pct: number, mode: boolean) {
+    function getColorForPercentage(pct: number, mode: boolean) {
         const positive = [
             { pct: 0.05, color: { r: 0xff, g: 0xff, b: 0x22 } },
             { pct: 0.5, color: { r: 0x86, g: 0xff, b: 0x11 } },
@@ -101,9 +134,9 @@ class Map extends React.Component<MapProps, {}> {
             b: Math.floor(lower.color.b * pctLower + upper.color.b * pctUpper)
         };
         
-        return "#" + this.componentToHex(color.r) + this.componentToHex(color.g) + this.componentToHex(color.b);
+        return "#" + componentToHex(color.r) + componentToHex(color.g) + componentToHex(color.b);
     };
 }
 
 
-export default Map
+export default Map;
