@@ -88,7 +88,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
             }
         }
         setCurTimelineVal(props.timelineValue)
-    }, [props.timelineValue, chart, curTimelineVal, getColorForPercentage, globalState])
+    }, [props.timelineValue])
 
     return (
         <div id="chartdiv" style={{ width: "95%", height: "80%" }}></div>
