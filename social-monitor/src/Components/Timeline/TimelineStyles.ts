@@ -2,11 +2,11 @@ import styled from "styled-components";
 import RangeSlider from 'react-bootstrap-range-slider';
 
 export const Panel = styled.div<{open: boolean}>`
-    background-color: #212327;
+    background-color: #016DBF;
     opacity: 0.9;
     color: white;
     font-size: 20px;
-    height: ${props => props.open ? "20%": "35px"};
+    height: ${props => props.open ? "40%": "35px"};
     position: fixed;
     bottom: 0px;
     z-index: 1;
@@ -63,4 +63,10 @@ export const Slider = styled(RangeSlider)`
         background: #4CAF50;
         cursor: pointer;
     }
+`;
+
+export const NERContainer = styled.div`
+    overflow-y: scroll;
+    display: flex;
+    flex-direction: column;
 `;

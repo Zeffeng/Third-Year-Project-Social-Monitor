@@ -18,8 +18,8 @@ def main(tweets, name):
             "sentiment": 0,
             "count": 0    
         }
+    
     timelineData = []
-
     date = tweets[0]["date"]
     for tweet in tweets:
         result = sentiment_analyzer_scores(tweet["content"], analyser)
@@ -39,7 +39,6 @@ def main(tweets, name):
                 break
             if countryData[country]["count"] == 0:
                 countryData[country] = None
-                # del countryData[country]
             else:
                 countryData[country] = countryData[country]["sentiment"] / countryData[country]["count"]
     
@@ -53,5 +52,6 @@ def main(tweets, name):
         f.write(json.dumps(tweets, indent=4, sort_keys=True))
 
     return timelineData
+
 if __name__ == '__main__':
     main(sys.argv[1], sys.argv[2])

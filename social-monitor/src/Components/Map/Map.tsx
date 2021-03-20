@@ -91,7 +91,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
     }, [props.timelineValue])
 
     return (
-        <div id="chartdiv" style={{ width: "95%", height: "80%" }}></div>
+        <div id="chartdiv" style={{ width: "99%", height: "80%" }}></div>
     );    
 
     function componentToHex(c: number) {

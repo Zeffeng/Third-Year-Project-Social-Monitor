@@ -7,7 +7,7 @@ from geopy.exc import GeocoderTimedOut
 from geopy.extra.rate_limiter import RateLimiter
 import time 
 import tweepy
-from langdetect import detect
+from langdetect import detect, lang_detect_exception
 import pycountry
 import sys
 
@@ -18,28 +18,6 @@ fromDate = '2020-01-01'
 toDate = '2020-01-02'
 
 daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
-# def remove_emoji(string):
-#     emoji_pattern = re.compile("["
-#                                u"\U0001F600-\U0001F64F"  # emoticons
-#                                u"\U0001F300-\U0001F5FF"  # symbols & pictographs
-#                                u"\U0001F680-\U0001F6FF"  # transport & map symbols
-#                                u"\U0001F1E0-\U0001F1FF"  # flags (iOS)
-#                                u"\U00002500-\U00002BEF"  # chinese char
-#                                u"\U00002702-\U000027B0"
-#                                u"\U00002702-\U000027B0"
-#                                u"\U000024C2-\U0001F251"
-#                                u"\U0001f926-\U0001f937"
-#                                u"\U00010000-\U0010ffff"
-#                                u"\u2640-\u2642"
-#                                u"\u2600-\u2B55"
-#                                u"\u200d"
-#                                u"\u23cf"
-#                                u"\u23e9"
-#                                u"\u231a"
-#                                u"\ufe0f"  # dingbats
-#                                u"\u3030"
-#                                "]+", flags=re.UNICODE)
-#     return emoji_pattern.sub(r'', string)
 
 geolocator = Nominatim(user_agent="3rd year project")
 geolocatorRateL = RateLimiter(geolocator.geocode, min_delay_seconds=5)
@@ -53,16 +31,17 @@ def geoCode(address):
 auth = tweepy.AppAuthHandler("MAHDLIR9hqfBrkoLWWlVxHQ6V","M3bU5oKKOK1TTfzq69DYX2Ah8LSBZLj5lZeQntkKPeGFqghjPn")
 api = tweepy.API(auth, wait_on_rate_limit=True)
 curMonth = 1
+maxTweetsPerDay = 40
 while curMonth < 13:
     numDays = 0
     while numDays < daysInMonth[curMonth]:
         numTweets = 0
         print(fromDate, toDate)
         for i,tweet in enumerate(scrape.TwitterSearchScraper('#' + hashtag + ' since:' + fromDate + ' until:' + toDate).get_items()) :
-                if numTweets > 15:
+                if numTweets > maxTweetsPerDay:
                     break
                 user = api.get_user(tweet.username)
-                if user is not None and hasattr(user, 'location') and detect(tweet.content) == 'en':
+                if user is not None and hasattr(user, 'location') and hasattr(tweet, 'content') and detect(tweet.content) == 'en':
                     processedContent = re.sub(
                         r'http\S+', 
                         '', 
@@ -82,7 +61,7 @@ while curMonth < 13:
                                 "date": tweet.date.strftime("%m/%d/%Y"),
                                 "label": None
                             })
-                            numTweets = numTweets + 1
+                            numTweets += 1
         numDays = numDays + 1
         fromDate = toDate
         toDate = (datetime.strptime(fromDate, '%Y-%m-%d') + timedelta(days=1)).strftime('%Y-%m-%d')

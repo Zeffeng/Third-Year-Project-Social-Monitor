@@ -6,6 +6,7 @@ node_modules
 social-monitor/node_modules
 /.pnp
 .pnp.js
+Model/cache_dir
 
 # testing
 /coverage

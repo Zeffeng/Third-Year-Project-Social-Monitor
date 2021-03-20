@@ -1,6 +1,8 @@
 export interface MapState {
     CountryData: Country[],
-    TimelineData: CountryCodeData[]
+    TimelineData: CountryCodeData[],
+    TimelineNER: NERTimeline,
+    File: {name: string, content: string} | undefined
 }
 
 export interface Country {
@@ -13,3 +15,8 @@ export interface Country {
 export interface CountryCodeData {
     [id: string]: number | string | null
 }
+
+export interface NERTimeline {
+    [id: string]: string[]
+}
+
