@@ -43,7 +43,6 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
             method: 'POST',
             body: JSON.stringify(localFile.content)
         }).then(res => res.json()).then(response => {
-            console.log(response)
             globalState.set("TimelineNER", response)
         })
     }

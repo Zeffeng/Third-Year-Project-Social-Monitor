@@ -6,7 +6,7 @@ export const Panel = styled.div<{open: boolean}>`
     opacity: 0.9;
     color: white;
     font-size: 20px;
-    height: ${props => props.open ? "40%": "35px"};
+    height: ${props => props.open ? "50%": "35px"};
     position: fixed;
     bottom: 0px;
     z-index: 1;
@@ -14,13 +14,14 @@ export const Panel = styled.div<{open: boolean}>`
     display: flex;
     flex-direction: column;
     transition: height 0.5s;
-    align-items: center;
+    align-items: flex-start;
+    margin-left: 40px;
 `;
 
 export const Button = styled.button`
     width: 100px;
     align-self: center;
-    margin-top: 1px;
+    margin-top: 5px;
     display: inline-block;
     padding: 6px 0px;
     border: 0.1em solid #FFFFFF;
@@ -46,7 +47,7 @@ export const Slider = styled(RangeSlider)`
     outline: none;
     opacity: 0.8;
     -webkit-transition: .2s;
-    transition: opacity .2s; 
+    transition: opacity .2s;
     ::-moz-range-thumb {
         width: 25px;
         height: 25px;
@@ -69,4 +70,5 @@ export const NERContainer = styled.div`
     overflow-y: scroll;
     display: flex;
     flex-direction: column;
+    margin-top: 10px;
 `;

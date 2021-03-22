@@ -65,7 +65,7 @@ const Timeline: React.FC<TimelineProps> = (props: TimelineProps) => {
                     const temp = item.split("<,>")
                     const entity = temp[0]
                     const num = temp[1]
-                    return <p>{entity + ": " + num}</p>
+                    return <li>{entity + ": " + num}</li>
                 }) : null}
             </NERContainer>
         </Panel>

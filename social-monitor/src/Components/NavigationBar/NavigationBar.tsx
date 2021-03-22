@@ -11,7 +11,7 @@ const NavBar = styled.div<{open: boolean}>`
     align-items: baseline;
     position: fixed;
     width: 100%;
-    height: ${props => props.open ? "110px" : "40px"};
+    height: ${props => props.open ? "130px" : "40px"};
     top: 0px;
     z-index: 1;
     padding-left: 15px;
