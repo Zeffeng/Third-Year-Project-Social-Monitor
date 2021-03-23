@@ -36,15 +36,14 @@ const Timeline: React.FC<TimelineProps> = (props: TimelineProps) => {
 
     function handleSliderChange(e: React.ChangeEvent<HTMLInputElement>) {
         const dateUNIX = parseInt(e.target.value)
-        const date = new Date(dateUNIX).toLocaleDateString("en-US", dateOptions)
+        const date = new Date(dateUNIX).toLocaleDateString("fr-CA", dateOptions)
         setCurrentDate({
             unix: dateUNIX,
             words: date
         })
         const timelineData = globalState.get("TimelineData") as CountryCodeData[]
         if (timelineData.length > 0) {
-            const position = timelineData.map(item => item["date"]).indexOf(date)
-            setTimelineValue(position)
+            setTimelineValue(timelineData.map(item => item["date"]).indexOf(date))
         }
     }
     
@@ -54,12 +53,12 @@ const Timeline: React.FC<TimelineProps> = (props: TimelineProps) => {
             <Slider onChange={event => handleSliderChange(event)} value={currentDate.unix} 
                 min={range.min} max={range.max} step={86400} 
                 tooltipLabel={(value) => {
-                    return new Date(value).toLocaleDateString("en-US", dateOptions)
+                    return new Date(value).toLocaleDateString("fr-CA", dateOptions)
                 }}
 
             />
             <NERContainer>
-                {!!globalState.get("TimelineNER") && currentDate.words !== "" ? (globalState.get("TimelineNER") as NERTimeline)[
+                {Object.keys(globalState.get("TimelineNER")).length && currentDate.words !== "" ? (globalState.get("TimelineNER") as NERTimeline)[
                     currentDate.words
                 ].map(item => {
                     const temp = item.split("<,>")

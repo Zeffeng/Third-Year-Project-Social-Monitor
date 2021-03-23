@@ -26,8 +26,8 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
 
             let polygonSeries = mapChart.series.push(new am4maps.MapPolygonSeries());
             polygonSeries.exclude = [
-                "AQ", "HM", "TF", "RE", "SC", "IO", "CX", "CC", "MV", "BV", "GS", "SH", "ST",
-                "JU", "KM", "YT", "GO", "GU", "PW", "MP", "FM", "NR", "MH", "TV", "NF", "CV", "FO",
+                "AQ", "HM", "TF", "RE", "SC", "IO", "CX", "CC", "BV", "GS", "SH", "ST",
+                "JU", "KM", "YT", "GO", "GU", "PW", "MP", "FM", "NR", "MH", "NF", "CV", "FO",
                 "PM", "TC", "KY", "PF", "PN", "CK", "NU", "TO", "WF", "TK"
             ];
             polygonSeries.useGeodata = true;
@@ -63,25 +63,27 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
             const polygons = chart.series.getIndex(0) as am4maps.MapPolygonSeries;
             if (polygons) {
                 const timelineData = globalState.get("TimelineData")[props.timelineValue] as CountryCodeData
-                for (const [key, value] of Object.entries(timelineData)) {
-                    const polygon = polygons.getPolygonById(key)
-                    if (polygon) {
-                        const val = value as number
-                        (polygon.dataItem.dataContext as Country).value = val
-                        polygon.dataItem.value = val
-                        let fill = polygon.fill
-                        if (val) {
-                            if(val > 0.05) {
-                                fill = am4core.color(getColorForPercentage(val, true))
-                            } else if (val < -0.05) {
-                                fill = am4core.color(getColorForPercentage(val, false))
-                            } else if (val <= 0.05 && val >= -0.05) {
-                                fill = am4core.color("#FFFF22")
+                if (timelineData) {
+                    for (const [key, value] of Object.entries(timelineData)) {
+                        const polygon = polygons.getPolygonById(key)
+                        if (polygon) {
+                            const val = value as number
+                            (polygon.dataItem.dataContext as Country).value = val
+                            polygon.dataItem.value = val
+                            let fill = polygon.fill
+                            if (val) {
+                                if(val > 0.05) {
+                                    fill = am4core.color(getColorForPercentage(val, true))
+                                } else if (val < -0.05) {
+                                    fill = am4core.color(getColorForPercentage(val, false))
+                                } else if (val <= 0.05 && val >= -0.05) {
+                                    fill = am4core.color("#FFFF22")
+                                }
+                            } else {
+                                fill = am4core.color("#D9D9D9")
                             }
-                        } else {
-                            fill = am4core.color("#D9D9D9")
+                            polygon.fill = fill
                         }
-                        polygon.fill = fill
                     }
                 }
                 polygons.invalidateRawData()
