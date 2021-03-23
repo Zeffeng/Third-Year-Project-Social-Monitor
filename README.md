@@ -21,13 +21,15 @@ The project will be split up into three main objectives to facilitate smoother d
   - World map: Find a JS library with an interactable world map, zoomable, overlay data, colours to represent +/-
   - Timeline: Slider to change date? map reacts to this change
 - Process Data 
-  - Sentiment analysis (Currently using VADER, and investigating other models)
-  - NER
+  - Sentiment analysis (Currently using VADER, and investigating BERT, and clustering methods)
+  - Entity Recognition
 
 ### Tech
 
 * [React] - Main JS framework for site
 * [AMCharts] - Charting package used for world map
-
+* [Snscrape] - Used to scrape tweets ids for specific hashtags
+* [Social Media Mining Tool (SMMT)] - Used to hydrate tweet ids
+* [spaCy] - Used to Name Entity Recognition
 
 
