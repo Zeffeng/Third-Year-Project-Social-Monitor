@@ -1,15 +1,15 @@
 import React from "react";
 import { GlobalProps } from "../../Types/GlobalProps";
-import { CountryCodeData, NERTimeline } from "../../Types/MapState";
-import { Button, NERContainer, Panel, Slider } from "./TimelineStyles";
+import { CountryCodeData } from "../../Types/MapState";
+import { TimelineValuesState } from "../../Types/TimelineValuesState";
+import { Slider, SliderContainer } from "./TimelineStyles";
 
 interface TimelineProps extends GlobalProps {
-    setTimelineValue: Function
+    setTimelineValues: React.Dispatch<React.SetStateAction<TimelineValuesState>>,
+    timelineValues: TimelineValuesState
 }
 const Timeline: React.FC<TimelineProps> = (props: TimelineProps) => {
-    const { globalState, setTimelineValue } = props;
-    const [isOpen, setIsOpen] = React.useState(false);
-    const [currentDate, setCurrentDate] = React.useState<{unix: number, words: string}>({unix: 0, words: ""});
+    const { globalState, setTimelineValues, timelineValues } = props;
     const [range, setRange] = React.useState({min: 0, max: 0});
 
     const dateOptions: Intl.DateTimeFormatOptions = {
@@ -26,48 +26,37 @@ const Timeline: React.FC<TimelineProps> = (props: TimelineProps) => {
                     max: Date.parse(timelineData.slice(-1)[0]["date"] as string),
                     min: Date.parse(timelineData[0]["date"] as string)
                 })
-                setCurrentDate({
-                    unix: Date.parse(timelineData.slice(-1)[0]["date"] as string),
-                    words: ""
+                setTimelineValues({
+                    timelineIndex: 0,
+                    currentDateUnix: Date.parse(timelineData.slice(-1)[0]["date"] as string),
+                    currentDateString: ""
                 })
             }
         }
-    }, [range.max, globalState])
+    })
 
     function handleSliderChange(e: React.ChangeEvent<HTMLInputElement>) {
         const dateUNIX = parseInt(e.target.value)
         const date = new Date(dateUNIX).toLocaleDateString("fr-CA", dateOptions)
-        setCurrentDate({
-            unix: dateUNIX,
-            words: date
-        })
         const timelineData = globalState.get("TimelineData") as CountryCodeData[]
         if (timelineData.length > 0) {
-            setTimelineValue(timelineData.map(item => item["date"]).indexOf(date))
+            setTimelineValues({
+                timelineIndex: timelineData.map(item => item["date"]).indexOf(date),
+                currentDateString: date,
+                currentDateUnix: dateUNIX
+            })
         }
     }
     
     return (
-        <Panel open={isOpen}>
-            <Button onClick={() => setIsOpen(!isOpen)}>Timeline</Button>
-            <Slider onChange={event => handleSliderChange(event)} value={currentDate.unix} 
+        <SliderContainer>
+            <Slider onChange={event => handleSliderChange(event)} value={timelineValues.currentDateUnix} 
                 min={range.min} max={range.max} step={86400} 
                 tooltipLabel={(value) => {
                     return new Date(value).toLocaleDateString("fr-CA", dateOptions)
                 }}
-
             />
-            <NERContainer>
-                {Object.keys(globalState.get("TimelineNER")).length && currentDate.words !== "" ? (globalState.get("TimelineNER") as NERTimeline)[
-                    currentDate.words
-                ].map(item => {
-                    const temp = item.split("<,>")
-                    const entity = temp[0]
-                    const num = temp[1]
-                    return <li>{entity + ": " + num}</li>
-                }) : null}
-            </NERContainer>
-        </Panel>
+        </SliderContainer>
     )
 }
 

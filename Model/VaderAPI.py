@@ -10,22 +10,29 @@ def sentiment_analyzer_scores(sentence, analyser):
 
 def main(tweets, name):
     analyser = SentimentIntensityAnalyzer()
-
     with open("Data/CountryData.txt", "r", encoding="utf-8") as inFile:
         countryData = json.loads(inFile.read())
     for country in countryData:
         countryData[country] = {
-            "sentiment": 0,
-            "count": 0    
+            "positive": 0,
+            "neutral": 0,
+            "negative": 0,
+            "count": 0  
         }
     
     timelineData = []
     date = tweets[0]["date"]
     for tweet in tweets:
-        result = sentiment_analyzer_scores(tweet["content"], analyser)
-        countryData[tweet["alpha2"]]["sentiment"] += result
-        countryData[tweet["alpha2"]]["count"] += 1
+        result = sentiment_analyzer_scores(tweet["contentCleaned"], analyser)
         tweet["label"] = result
+        if result > 0.05:
+            result = "positive"
+        elif result < -0.05:
+            result = "negative"
+        else:
+            result = "neutral"
+        countryData[tweet["alpha2"]][result] += 1
+        countryData[tweet["alpha2"]]["count"] += 1
         if tweet["date"] != date:
             dataCopy = copy.deepcopy(countryData)
             dataCopy["date"] = date
@@ -40,7 +47,31 @@ def main(tweets, name):
             if countryData[country]["count"] == 0:
                 countryData[country] = None
             else:
-                countryData[country] = countryData[country]["sentiment"] / countryData[country]["count"]
+                posPercent = (countryData[country]["positive"] / countryData[country]["count"], "pos")
+                neuPercent = (countryData[country]["neutral"] / countryData[country]["count"], "neu")
+                negPercent = (countryData[country]["negative"] / countryData[country]["count"], "neg")
+                largest = sorted([posPercent, neuPercent, negPercent], key=lambda tup: tup[0])[-1]
+                if largest[1] == "pos":
+                    if largest[0] > 0.8:
+                        result = 1
+                    elif largest[0] > 0.6:
+                        result = 0.7
+                    elif largest[0] > 0.4:
+                        result = 0.4
+                    else:
+                        result = 0.2
+                elif largest[1] == "neg":
+                    if largest[0] > 0.8:
+                        result = -1
+                    elif largest[0] > 0.6:
+                        result = -0.7
+                    elif largest[0] > 0.4:
+                        result = -0.4
+                    else:
+                        result = -0.2
+                elif largest[1] == "neu":
+                    result = 0
+                countryData[country] = result
     
     with open('Results/' + name + 'Timeline.txt', 'w', encoding='utf-8') as f:
         f.write(json.dumps(timelineData, indent=4, sort_keys=True))

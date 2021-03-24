@@ -4,14 +4,14 @@ import styled from "styled-components";
 import Scripts from "../Scripts/Scripts";
 import { GlobalProps } from "../../Types/GlobalProps";
 
-const NavBar = styled.div<{open: boolean}>`
+const NavBar = styled.div`
     background-color: #016DBF;
     opacity: 0.9;
     display: flex;
     align-items: baseline;
     position: fixed;
-    width: 100%;
-    height: ${props => props.open ? "130px" : "40px"};
+    width: 20%;
+    height: 40px;
     top: 0px;
     z-index: 1;
     padding-left: 15px;
@@ -47,7 +47,7 @@ const NavigationBar: React.FC<NavigationBarProps> = (props: NavigationBarProps) 
     const [isOpen, setIsOpen] = React.useState(false);
 
     return (
-        <NavBar open={isOpen}>
+        <NavBar>
             <div>
                 <TitleLink to="/">Social Monitor</TitleLink>
                 <ScriptsButton onClick={() => setIsOpen(!isOpen)}>Scripts</ScriptsButton>

@@ -5,11 +5,12 @@ import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import { GlobalProps } from '../../Types/GlobalProps';
 import { Country, CountryCodeData } from '../../Types/MapState';
+import { TimelineValuesState } from '../../Types/TimelineValuesState';
 
 am4core.useTheme(am4themes_animated);
 
 interface MapProps extends GlobalProps {
-    timelineValue: number
+    timelineValue: TimelineValuesState
 }
 const Map: React.FC<MapProps> = (props: MapProps) => {
     const { globalState } = props;
@@ -62,7 +63,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
         if (curTimelineVal !== -1 && chart){
             const polygons = chart.series.getIndex(0) as am4maps.MapPolygonSeries;
             if (polygons) {
-                const timelineData = globalState.get("TimelineData")[props.timelineValue] as CountryCodeData
+                const timelineData = globalState.get("TimelineData")[props.timelineValue.timelineIndex] as CountryCodeData
                 if (timelineData) {
                     for (const [key, value] of Object.entries(timelineData)) {
                         const polygon = polygons.getPolygonById(key)
@@ -71,7 +72,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
                             (polygon.dataItem.dataContext as Country).value = val
                             polygon.dataItem.value = val
                             let fill = polygon.fill
-                            if (val) {
+                            if (val !== null) {
                                 if(val > 0.05) {
                                     fill = am4core.color(getColorForPercentage(val, true))
                                 } else if (val < -0.05) {
@@ -89,11 +90,11 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
                 polygons.invalidateRawData()
             }
         }
-        setCurTimelineVal(props.timelineValue)
+        setCurTimelineVal(props.timelineValue.timelineIndex)
     }, [props.timelineValue])
 
     return (
-        <div id="chartdiv" style={{ width: "99%", height: "80%" }}></div>
+        <div id="chartdiv" style={{ width: "82%", height: "72%" }}></div>
     );    
 
     function componentToHex(c: number) {

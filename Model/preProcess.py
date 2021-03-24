@@ -39,6 +39,34 @@ def geoCode(address):
     except GeocoderTimedOut:
         return geoCode(address)
 
+def sort(tweets):
+    months = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
+    for tweet in tweets:
+        month = int(tweet["date"].split("-")[1])
+        if len(months[month]) == 0:
+            months[month].append(tweet)
+        else:
+            inserted = False
+            whereToInsert = [9999999999, 9999999999]
+            day = int(tweet["date"].split("-")[2])
+            for i in range(len(months[month])):
+                difference = int(months[month][i]["date"].split("-")[2]) - day
+                if difference == 1 or difference == 0:
+                    months[month].insert(i, tweet)
+                    inserted = True
+                    break;
+                elif difference > 0 and difference < whereToInsert[1]:
+                    whereToInsert[0] = i;
+                    whereToInsert[1] = difference
+            if not inserted:
+                months[month].insert(whereToInsert[0], tweet)
+
+    sort = []
+    for month in months:
+        sort = [*sort, *month]
+
+    return sort
+
 def main(mode):
     if mode == "raw":
         tweets = open("data/CoronavirusTweetsRaw", "r", encoding="utf-8") 
@@ -46,7 +74,6 @@ def main(mode):
         cleanedTweets = []
 
         counter = 0
-        start = time.time()
         for tweet in tweetsByLine:
             print(counter)
             counter += 1
@@ -55,7 +82,12 @@ def main(mode):
                 temp = {}
                 temp["alpha2"] = None
                 temp["content"] = current["text"] 
-                temp["contentCleaned"] = remove_emoji(current["text"])
+                cleanedText = re.sub(
+                    r'http\S+', 
+                    '', 
+                    remove_emoji(current["text"]).replace("#", "").replace("@", "").replace("\n", "").replace(":", "").replace(" - ", " ")
+                )
+                temp["contentCleaned"] = cleanedText
                 temp["date"] = datetime.datetime.strptime(current["created_at"], "%a %b %d %H:%M:%S %z %Y").strftime("%Y-%m-%d")
                 temp["label"] = None
                 location = current["user"]["location"]
@@ -71,45 +103,16 @@ def main(mode):
                             temp["alpha2"] = country.alpha_2
                             cleanedTweets.append(temp)
 
-        end = time.time()
-        print(end-start)
+        sortedCleanedTweets = sort(cleanedTweets)
+
         with open('data/CoronavirusTweets.txt', 'w', encoding='utf-8') as f:
-            f.write(json.dumps(cleanedTweets, indent=4, sort_keys=True))
+            f.write(json.dumps(sortedCleanedTweets, indent=4, sort_keys=True))
     else:
         with open("data/CoronavirusTweets.txt", "r", encoding="utf-8") as inFile:
             tweets = json.loads(inFile.read()) 
-        
-        # sort dict
-        months = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
-        for tweet in tweets:
-            month = int(tweet["date"].split("-")[1])
-            if len(months[month]) == 0:
-                months[month].append(tweet)
-            else:
-                inserted = False
-                whereToInsert = [9999999999, 9999999999]
-                day = int(tweet["date"].split("-")[2])
-                for i in range(len(months[month])):
-                    difference = int(months[month][i]["date"].split("-")[2]) - day
-                    if difference == 1 or difference == 0:
-                        months[month].insert(i, tweet)
-                        inserted = True
-                        break;
-                    elif difference > 0 and difference < whereToInsert[1]:
-                        whereToInsert[0] = i;
-                        whereToInsert[1] = difference
-                if not inserted:
-                    months[month].insert(whereToInsert[0], tweet)
-
-        sort = []
-        for month in months:
-            sort = [*sort, *month]
-
-        # for tweet in tweets:
-        #     tweet["date"] = datetime.datetime.strptime(tweet["date"], "%d/%m/%Y").strftime("%Y-%m-%d")
 
         with open('data/CoronavirusTweets.txt', 'w', encoding='utf-8') as f:
-            f.write(json.dumps(sort, indent=4, sort_keys=True))
+            f.write(json.dumps(tweets, indent=4, sort_keys=True))
 
 # Invoke Main
 main(sys.argv[1])

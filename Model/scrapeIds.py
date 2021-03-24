@@ -13,6 +13,7 @@ import sys
 
 # Run this after scraping ids to hydrate tweets
 # python get_metadata.py -i clean-dataset-filtered.tsv -o "file-name" -k api_keys.json
+# get_metadata.py should be acquired from SMMT
 
 tweets = []
 hashtag = sys.argv[1]

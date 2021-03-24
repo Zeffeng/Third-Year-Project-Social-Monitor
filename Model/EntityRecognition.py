@@ -7,8 +7,6 @@ import time
 import copy
 
 def main(tweetDataset, preCalc):
-    
-
     if preCalc == "true":
         with open("Results/NERTimeline.txt", "r", encoding="utf-8") as inFile:
             results = json.loads(inFile.read())
@@ -26,13 +24,13 @@ def main(tweetDataset, preCalc):
             result = ner(tweet["contentCleaned"])
             resultPerDay = [*resultPerDay, *[x.text for x in result.ents]]
             if tweet["date"] != date:
+                print(date)
                 dataCopy = copy.deepcopy(resultPerDay)
                 temp = []
                 for tup in Counter(dataCopy).most_common():
                     temp.append(tup[0] + "<,>" + str(tup[1]))
                 resultTimeline[date] = temp
                 date = tweet["date"]
-            # pprint.pprint([(x.text, x.label_) for x in result.ents])
         end = time.time()
         print(end-start)
 
