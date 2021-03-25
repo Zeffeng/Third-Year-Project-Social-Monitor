@@ -4,7 +4,7 @@ import * as am4maps from "@amcharts/amcharts4/maps";
 import am4themes_animated from "@amcharts/amcharts4/themes/animated";
 import am4geodata_worldLow from "@amcharts/amcharts4-geodata/worldLow";
 import { GlobalProps } from '../../Types/GlobalProps';
-import { Country, CountryCodeData } from '../../Types/MapState';
+import { Country, CountryCodeData, CountrySentimentData } from '../../Types/MapState';
 import { TimelineValuesState } from '../../Types/TimelineValuesState';
 
 am4core.useTheme(am4themes_animated);
@@ -52,7 +52,16 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
             })
 
             let polygonTemplate = polygonSeries.mapPolygons.template;
-            polygonTemplate.tooltipText = "{name} : {value}";
+            if ("{value" == null) {
+            
+            polygonTemplate.tooltipText = `
+                {name}\n
+                Postive: {sentimentDistribution.pos}%
+                Neutral: {sentimentDistribution.neu}%
+                Negative: {sentimentDistribution.neg}%
+            `;} else {
+                polygonTemplate.tooltipText = "{name}"
+            }
             polygonTemplate.nonScalingStroke = true;
 
             setChart(mapChart)
@@ -68,22 +77,28 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
                     for (const [key, value] of Object.entries(timelineData)) {
                         const polygon = polygons.getPolygonById(key)
                         if (polygon) {
-                            const val = value as number
-                            (polygon.dataItem.dataContext as Country).value = val
-                            polygon.dataItem.value = val
-                            let fill = polygon.fill
-                            if (val !== null) {
+                            if (value !== null) {
+                                const val = (value as CountrySentimentData).sentiment; 
+                                (polygon.dataItem.dataContext as Country).value = val 
+                                polygon.dataItem.value = val 
+                                // let fill = polygon.fill
                                 if(val > 0.05) {
-                                    fill = am4core.color(getColorForPercentage(val, true))
+                                    polygon.fill = am4core.color(getColorForPercentage(val, true))
                                 } else if (val < -0.05) {
-                                    fill = am4core.color(getColorForPercentage(val, false))
+                                    polygon.fill = am4core.color(getColorForPercentage(val, false))
                                 } else if (val <= 0.05 && val >= -0.05) {
-                                    fill = am4core.color("#FFFF22")
+                                    polygon.fill = am4core.color("#FFFF22")
                                 }
+                                polygon.tooltipText = `
+                                    {name}\n
+                                    Postive: {sentimentDistribution.pos}%
+                                    Neutral: {sentimentDistribution.neu}%
+                                    Negative: {sentimentDistribution.neg}%
+                                `;
                             } else {
-                                fill = am4core.color("#D9D9D9")
+                                polygon.fill = am4core.color("#D9D9D9")
+                                polygon.tooltipText = "{name}"
                             }
-                            polygon.fill = fill
                         }
                     }
                 }
@@ -94,7 +109,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
     }, [props.timelineValue])
 
     return (
-        <div id="chartdiv" style={{ width: "82%", height: "72%" }}></div>
+        <div id="chartdiv" style={{ width: "83vw", height: "72%" }}></div>
     );    
 
     function componentToHex(c: number) {

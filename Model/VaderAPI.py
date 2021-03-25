@@ -71,7 +71,14 @@ def main(tweets, name):
                         result = -0.2
                 elif largest[1] == "neu":
                     result = 0
-                countryData[country] = result
+                countryData[country] = {
+                    "sentiment": result,
+                    "sentimentDistribution": {
+                        "neg": negPercent[0] * 100,
+                        "neu": neuPercent[0] * 100,
+                        "pos": posPercent[0] * 100
+                    }
+                }
     
     with open('Results/' + name + 'Timeline.txt', 'w', encoding='utf-8') as f:
         f.write(json.dumps(timelineData, indent=4, sort_keys=True))

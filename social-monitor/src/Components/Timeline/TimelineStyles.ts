@@ -3,7 +3,7 @@ import RangeSlider from 'react-bootstrap-range-slider';
 
 export const Slider = styled(RangeSlider)`
     margin-top: 20px;
-    width: 79vw;
+    width: 81vw;
     -webkit-appearance: none;
     height: 15px;
     border-radius: 5px;  

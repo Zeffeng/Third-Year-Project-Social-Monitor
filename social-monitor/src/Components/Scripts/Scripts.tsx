@@ -1,5 +1,5 @@
 import React from 'react'
-import { Country } from "../../Types/MapState";
+import { Country, CountryCodeData, CountrySentimentData } from "../../Types/MapState";
 import { GlobalProps } from '../../Types/GlobalProps';
 import { useHistory } from 'react-router-dom';
 
@@ -20,10 +20,18 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
             method: 'POST',
             body: JSON.stringify(localFile.content)
         }).then(res => res.json()).then(response => {
-            const data = response.slice(-1)[0]
+            const data = response.slice(-1)[0] as CountryCodeData
             const countryData = globalState.get("CountryData") as Country[]
             countryData.forEach(item => {
-                item.value = data[item.id]
+                const countryDataFromResponse = data[item.id]
+                if (countryDataFromResponse !== undefined) {
+                    if (countryDataFromResponse !== null) {
+                        item.value = (countryDataFromResponse as CountrySentimentData).sentiment
+                        item.sentimentDistribution = (countryDataFromResponse as CountrySentimentData).sentimentDistribution
+                    } else {
+                        item.value = null
+                    }
+                }
             })
             globalState.set("CountryData", countryData)
             globalState.set("TimelineData", response)

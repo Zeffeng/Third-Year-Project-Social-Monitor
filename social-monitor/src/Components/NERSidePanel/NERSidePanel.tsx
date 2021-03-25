@@ -14,7 +14,7 @@ const NERContainer = styled.div`
     right: 0px;
     border: black solid 1px;
     z-index: 1;
-    width: 256px;
+    width: 16vw;
     color: white;
 `;
 

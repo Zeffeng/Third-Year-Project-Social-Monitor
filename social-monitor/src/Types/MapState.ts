@@ -9,14 +9,25 @@ export interface Country {
     id: string,
     name: string,
     value: number | null,
-    fill: string
+    fill: string,
+    sentimentDistribution: SentimentDistribution
 }
 
 export interface CountryCodeData {
-    [id: string]: number | string | null
+    [id: string]: CountrySentimentData | string | null
 }
 
 export interface NERTimeline {
     [id: string]: string[]
+}
+
+export interface CountrySentimentData {
+    sentiment: number,
+    sentimentDistribution: SentimentDistribution
+}
+export interface SentimentDistribution {
+    neg: number,
+    neu: number,
+    pos: number
 }
 

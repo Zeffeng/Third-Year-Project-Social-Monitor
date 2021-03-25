@@ -1,3 +1,5 @@
+import { Country } from "../../Types/MapState";
+
 export default function generateInitialData() {
     let countryList: {[key: string]: string} = {
         "AF": "Afghanistan",
@@ -219,18 +221,18 @@ export default function generateInitialData() {
         "AX": "Åland Islands"
     };
 
-    let countriesData: {
-        id: string,
-        name: string,
-        value: number | null,
-        fill: string
-    }[] = [];
+    let countriesData: Country[] = [];
     Object.entries(countryList).forEach(([key, value]) => {
         countriesData.push({
             id: key,
             name: value,
             value: null,
-            fill: "#000000"
+            fill: "#000000",
+            sentimentDistribution: {
+                pos: 0,
+                neg: 0,
+                neu: 0
+            }
         })
     })
     return countriesData
