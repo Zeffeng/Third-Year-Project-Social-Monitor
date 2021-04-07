@@ -11,8 +11,10 @@ def runVaderModel(name):
     result = VaderAPI.main(data, name)
     return jsonify(result)
 
-@app.route('/ner/<preCalc>', methods=['POST'])
-def runNER(preCalc):
+@app.route('/ner', methods=['POST'])
+def runNER():
     data = request.json
-    result = EntityRecognition.main(data, preCalc)
+    preCalc = request.args.get("preCalc")
+    name = request.args.get("name")
+    result = EntityRecognition.main(data, preCalc, name)
     return jsonify(result)

@@ -1,22 +1,8 @@
 import React from "react";
-import styled from "styled-components"
 import { GlobalProps } from "../../Types/GlobalProps";
-import { NERTimeline } from "../../Types/MapState";
+import { NERSentTimeline } from "../../Types/MapState";
 import { TimelineValuesState } from "../../Types/TimelineValuesState";
-
-const NERContainer = styled.div`
-    overflow-y: scroll;
-    overflow-x: hidden;
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    height: 100%;
-    right: 0px;
-    border: black solid 1px;
-    z-index: 1;
-    width: 16vw;
-    color: white;
-`;
+import { NERContainer, NERList, Text, Tooltip} from "./NERSidePanelStyles";
 
 interface NERSidePanelProps extends GlobalProps {
     timelineValues: TimelineValuesState
@@ -27,18 +13,21 @@ const NERSidePanel: React.FC<NERSidePanelProps> = (props: NERSidePanelProps) => 
     return (
         <NERContainer>
             Named Enities
-            <ol>
-                {Object.keys(globalState.get("TimelineNER")).length && timelineValues.currentDateString !== "" ? (globalState.get("TimelineNER") as NERTimeline)[
-                    timelineValues.currentDateString
-                ].map(item => {
-                    const temp = item.split("<,>")
-                    const entity = temp[0]
-                    const num = temp[1]
-                    if (parseInt(num) > 1) {
-                        return <li>{entity + ": " + num}</li>
-                    }
-                }) : null}
-            </ol>
+            <NERList>
+                {Object.keys(globalState.get("TimelineNER")).length && timelineValues.currentDateString !== "" 
+                    ? (globalState.get("TimelineNER") as NERSentTimeline)[timelineValues.currentDateString]
+                        .map(item => {
+                            const [key, value] = Object.entries(item)[0]
+                            const entity = key
+                            const totalCount = value.neg + value.neu + value.pos
+                            return (
+                                <Tooltip>{entity + ": " + totalCount}
+                                    <Text key={entity}>Postive: {value.pos + "\n"} Neutral: {value.neu + "\n"} Negative: {value.neg + "\n"}</Text>
+                                </Tooltip>
+                            )
+                        }) 
+                    : null}
+            </NERList>
         </NERContainer>
     )
 }

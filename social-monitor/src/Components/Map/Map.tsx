@@ -64,6 +64,14 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
             }
             polygonTemplate.nonScalingStroke = true;
 
+            let heatLegend = mapChart.createChild(am4maps.HeatLegend)
+            heatLegend.series = polygonSeries;
+            heatLegend.width = am4core.percent(80);
+            heatLegend.minColor = am4core.color("#FF000E");
+            heatLegend.maxColor = am4core.color("#09FF00");
+            heatLegend.minValue = -1;
+            heatLegend.maxValue = 1;
+            heatLegend.y = 840;
             setChart(mapChart)
         }
     }, [chart, globalState, getColorForPercentage])

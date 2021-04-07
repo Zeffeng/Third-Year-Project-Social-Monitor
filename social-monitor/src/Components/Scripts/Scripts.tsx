@@ -1,5 +1,5 @@
 import React from 'react'
-import { Country, CountryCodeData, CountrySentimentData } from "../../Types/MapState";
+import { Country, CountryCodeData, CountrySentimentData, NERSentTimeline, NERTimeline, SentimentDistribution } from "../../Types/MapState";
 import { GlobalProps } from '../../Types/GlobalProps';
 import { useHistory } from 'react-router-dom';
 
@@ -43,7 +43,7 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
         const globalFile = globalState.get("File")
         const localFile = globalFile ? globalFile : file
         const preCalculation = preCalc ? "true" : "false"
-        fetch('/ner/' + preCalculation, {
+        fetch('/ner?preCalc=' + preCalculation + '&name=' + localFile.name.split(".")[0], {
             headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
@@ -51,7 +51,84 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
             method: 'POST',
             body: JSON.stringify(localFile.content)
         }).then(res => res.json()).then(response => {
-            globalState.set("TimelineNER", response)
+            var cleanData: NERSentTimeline = {}
+            Object.entries((response as NERTimeline)).forEach(([key, value]) => {
+                var temp: { [id: string]: SentimentDistribution}[] = []
+                var doesExist: {[id: string]: number} = {}
+                value.forEach(val => {
+                    const string = val.split("<,>")[0]
+                    const entity = string.split("||")[0]
+                    const sentiment = string.split("||")[1]
+                    const count = val.split("<,>")[1]
+                    if (doesExist[entity] !== undefined) {
+                        const i = doesExist[entity]
+                        const [entryKey, entrySent] = Object.entries(temp[i])[0]
+                        switch (sentiment) {
+                            case "-1":
+                                temp[i] = { 
+                                    [entryKey]: {
+                                        neg: parseInt(count) + entrySent.neg,
+                                        neu: entrySent.neu,
+                                        pos: entrySent.pos
+                                    }
+                                };
+                                break;
+                            case "0":
+                                temp[i] = { 
+                                    [entryKey]: {
+                                        neg: entrySent.neg,
+                                        neu: parseInt(count) + entrySent.neu,
+                                        pos: entrySent.pos
+                                    }
+                                };
+                                break;
+                            case "1":
+                                temp[i] = { 
+                                    [entryKey]: {
+                                        neg: entrySent.neg,
+                                        neu: entrySent.neu,
+                                        pos: parseInt(count) + entrySent.pos
+                                    }
+                                };
+                                break;
+                        }
+                    } else {
+                        doesExist[entity] = temp.length;
+                        switch (sentiment) {
+                            case "-1":
+                                temp.push({
+                                    [entity]: {
+                                        neg: parseInt(count),
+                                        neu: 0,
+                                        pos: 0
+                                    }
+                                })
+                                break;
+                            case "0":
+                                temp.push({
+                                    [entity]: {
+                                        neg: 0,
+                                        neu: parseInt(count),
+                                        pos: 0
+                                    }
+                                });
+                                break;
+                            case "1":
+                                temp.push({
+                                    [entity]: {
+                                        neg: 0,
+                                        neu: 0,
+                                        pos: parseInt(count)
+                                    }
+                                });
+                                break;
+                        }
+                        
+                    }
+                })
+                cleanData[key] = temp
+            })
+            globalState.set("TimelineNER", cleanData)
         })
     }
 

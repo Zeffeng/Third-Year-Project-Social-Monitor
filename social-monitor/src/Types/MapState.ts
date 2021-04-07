@@ -1,7 +1,7 @@
 export interface MapState {
     CountryData: Country[],
     TimelineData: CountryCodeData[],
-    TimelineNER: NERTimeline,
+    TimelineNER: NERSentTimeline,
     File: {name: string, content: string} | undefined
 }
 
@@ -19,6 +19,10 @@ export interface CountryCodeData {
 
 export interface NERTimeline {
     [id: string]: string[]
+}
+
+export interface NERSentTimeline {
+    [id: string]: { [id: string]: SentimentDistribution }[]
 }
 
 export interface CountrySentimentData {

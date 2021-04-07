@@ -26,10 +26,13 @@ def main(tweets, name):
         result = sentiment_analyzer_scores(tweet["contentCleaned"], analyser)
         tweet["label"] = result
         if result > 0.05:
+            tweet["roundedLabel"] = 1
             result = "positive"
         elif result < -0.05:
+            tweet["roundedLabel"] = -1
             result = "negative"
         else:
+            tweet["roundedLabel"] = 0
             result = "neutral"
         countryData[tweet["alpha2"]][result] += 1
         countryData[tweet["alpha2"]]["count"] += 1
