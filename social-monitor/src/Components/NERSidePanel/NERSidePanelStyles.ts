@@ -9,9 +9,9 @@ export const NERContainer = styled.div`
     height: 100%;
     right: 0px;
     border: black solid 1px;
-    z-index: 1;
     width: 16vw;
     color: white;
+    padding: 5px;
 `;
 
 export const Tooltip = styled.div`
@@ -24,7 +24,6 @@ export const Text = styled.span`
     background-color: black;
     color: #fff;
     text-align: center;
-    padding: 5px 0;
     border-radius: 6px;
     
     position: absolute;
@@ -38,5 +37,5 @@ export const Text = styled.span`
 `;
 
 export const NERList = styled.div`
-    padding: 10px 0px 0px 5px
+    padding: 10px 0px 0px 0px
 `;

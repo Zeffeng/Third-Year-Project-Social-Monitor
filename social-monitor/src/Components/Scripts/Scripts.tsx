@@ -2,6 +2,42 @@ import React from 'react'
 import { Country, CountryCodeData, CountrySentimentData, NERSentTimeline, NERTimeline, SentimentDistribution } from "../../Types/MapState";
 import { GlobalProps } from '../../Types/GlobalProps';
 import { useHistory } from 'react-router-dom';
+import styled from "styled-components";
+
+const Button = styled.button`
+    margin-top: 3px;
+    border-radius: 5px;
+    border: none;
+    background-color: #B7C0EE;
+    color: #011638;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    :hover:enabled {
+        background-color: #8B9AE4
+    };
+    :disabled {
+        opacity: 0.3
+        
+    }
+`;
+
+const Label = styled.label`
+    border-radius: 5px;
+    border: none;
+    background-color: #B7C0EE;
+    color: #011638;
+    font-size: 14px;
+    font-weight: 500;
+    text-align: center;
+    :hover {
+        background-color: #8B9AE4
+    }
+`;
+
+const Input = styled.input`
+    display: none;
+`;
 
 interface ScriptsProps extends GlobalProps {}
 const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
@@ -146,11 +182,12 @@ const Scripts: React.FC<ScriptsProps> = (props: ScriptsProps) => {
     }
 
     return (
-        <>
-            <input type="file" onChange={e => uploadFile(e)} />
-            <button onClick={callModel}>Run Vader Model</button>
-            <button onClick={() => callNER(false)}>Run Entity Recognition</button>
-            <button onClick={() => callNER(true)}>Run Entity Recognition - Pre Calculated</button>
+        <>  
+            <Input type="file" id="file" onChange={e => uploadFile(e)} />
+            <Label htmlFor="file">Upload File</Label>
+            <Button disabled={file.name === ""} onClick={callModel}>Run Vader Model</Button>
+            <Button disabled={file.name === ""} onClick={() => callNER(false)}>Run Entity Recognition</Button>
+            <Button disabled={file.name === ""} onClick={() => callNER(true)}>Run Entity Recognition - Pre Calculated</Button>
         </>
     )
 }

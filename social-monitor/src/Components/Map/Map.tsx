@@ -66,12 +66,28 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
 
             let heatLegend = mapChart.createChild(am4maps.HeatLegend)
             heatLegend.series = polygonSeries;
-            heatLegend.width = am4core.percent(80);
+            heatLegend.width = am4core.percent(50);
+            heatLegend.markerContainer.height = 1;
             heatLegend.minColor = am4core.color("#FF000E");
             heatLegend.maxColor = am4core.color("#09FF00");
             heatLegend.minValue = -1;
             heatLegend.maxValue = 1;
             heatLegend.y = 840;
+            heatLegend.x = am4core.percent(25);
+
+            polygonSeries.mapPolygons.template.events.on("over", function(ev) {
+                if (!isNaN(ev.target.dataItem.value)) {
+                    heatLegend.valueAxis.showTooltipAt(ev.target.dataItem.value)
+                }
+                else {
+                    heatLegend.valueAxis.hideTooltip();
+                }
+            });
+
+            polygonSeries.mapPolygons.template.events.on("out", function(ev) {
+                heatLegend.valueAxis.hideTooltip();
+            });
+
             setChart(mapChart)
         }
     }, [chart, globalState, getColorForPercentage])
@@ -117,7 +133,7 @@ const Map: React.FC<MapProps> = (props: MapProps) => {
     }, [props.timelineValue])
 
     return (
-        <div id="chartdiv" style={{ width: "83vw", height: "72%" }}></div>
+        <div id="chartdiv" style={{ width: "82vw", height: "72%" }}></div>
     );    
 
     function componentToHex(c: number) {

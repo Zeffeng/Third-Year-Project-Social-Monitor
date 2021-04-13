@@ -67,9 +67,9 @@ def sort(tweets):
 
     return sort
 
-def main(mode):
+def main(mode, filename):
     if mode == "raw":
-        tweets = open("data/CoronavirusTweetsRaw", "r", encoding="utf-8") 
+        tweets = open("data/" + filename, "r", encoding="utf-8") 
         tweetsByLine = tweets.readlines()
         cleanedTweets = []
 
@@ -105,7 +105,7 @@ def main(mode):
 
         sortedCleanedTweets = sort(cleanedTweets)
 
-        with open('data/CoronavirusTweets.txt', 'w', encoding='utf-8') as f:
+        with open('data/' + filename + '.txt', 'w', encoding='utf-8') as f:
             f.write(json.dumps(sortedCleanedTweets, indent=4, sort_keys=True))
     else:
         with open("data/CoronavirusTweets.txt", "r", encoding="utf-8") as inFile:
@@ -115,4 +115,4 @@ def main(mode):
             f.write(json.dumps(tweets, indent=4, sort_keys=True))
 
 # Invoke Main
-main(sys.argv[1])
+main(sys.argv[1], sys.argv[2])
