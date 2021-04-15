@@ -41,6 +41,7 @@ def geoCode(address):
 
 def sort(tweets):
     months = [[],[],[],[],[],[],[],[],[],[],[],[],[]]
+
     for tweet in tweets:
         month = int(tweet["date"].split("-")[1])
         if len(months[month]) == 0:

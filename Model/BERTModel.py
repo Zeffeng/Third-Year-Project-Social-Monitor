@@ -7,7 +7,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from torch.utils.data import DataLoader, RandomSampler, SequentialSampler
 from transformers import AdamW, get_linear_schedule_with_warmup
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score, precision_score, recall_score
 import numpy as np
 import random
 import sys
@@ -86,6 +86,16 @@ def main(mode):
         preds_flat = np.argmax(preds, axis=1).flatten()
         labels_flat = labels.flatten()
         return f1_score(labels_flat, preds_flat, average='weighted')
+
+    def precision_score_func(preds, labels):
+        preds_flat = np.argmax(preds, axis=1).flatten()
+        labels_flat = labels.flatten()
+        return precision_score(labels_flat, preds_flat, average='weighted')
+
+    def recall_score_func(preds, labels):
+        preds_flat = np.argmax(preds, axis=1).flatten()
+        labels_flat = labels.flatten()
+        return recall_score(labels_flat, preds_flat, average='weighted')
 
     def accuracy_per_class(preds, labels):
         label_dict_inverse = {v: k for k, v in label_dict.items()}
@@ -184,12 +194,19 @@ def main(mode):
             
             val_loss, predictions, true_vals = evaluate(dataloader_validation)
             val_f1 = f1_score_func(predictions, true_vals)
+            val_precision = precision_score_func(predictions, true_vals)
+            val_recall = recall_score_func(predictions, true_vals)
             tqdm.write(f'Validation loss: {val_loss}')
             tqdm.write(f'F1 Score (Weighted): {val_f1}')
     elif mode == "test":
         model.load_state_dict(torch.load('results/data_volume/finetuned_BERT_epoch_1.model', map_location=torch.device('cpu')))
 
+        
         _, predictions, true_vals = evaluate(dataloader_validation)
+        val_f1 = f1_score_func(predictions, true_vals)
+        val_precision = precision_score_func(predictions, true_vals)
+        val_recall = recall_score_func(predictions, true_vals)
+        print(val_f1, val_precision, val_recall)
         accuracy_per_class(predictions, true_vals)
 
 if __name__ == '__main__':

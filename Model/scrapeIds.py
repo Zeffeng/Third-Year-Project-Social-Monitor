@@ -26,10 +26,10 @@ year = startDate.split("-")[0]
 daysInMonth = [0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31]
 
 curMonth = 1
-maxTweetsPerDay = 50
+maxTweetsPerDay = 75
 maxMonths = sys.argv[4]
 numMonths = 0
-while numMonths < maxMonths:
+while numMonths < int(maxMonths):
     numDays = 0
     while numDays < daysInMonth[curMonth]:
         numTweets = 0
